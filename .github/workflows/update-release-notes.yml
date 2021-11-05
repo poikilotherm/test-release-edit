@@ -31,7 +31,8 @@ jobs:
           since_last_remote_commit: 'true'
           files: |
             -release-notes.md$
-      - name: Get versions of modified release notes
+      - name: Create matrix of modified release note versions
+        id: set-matrix
         # Remove dirs and suffix then transform numbers to JSON array of strings
         run: >
           echo "::set-output name=versions::$(basename -s -release-notes.md
