@@ -57,7 +57,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Release
+      - name: Check tag exists
+        id: check-tag
+        uses: mukunku/tag-exists-action@v1.0.0
+        with:
+          tag: v${{ matrix.version }}
+      - name: Edit release
+        if: ${{ steps.check-tag.outputs.exists == 'true' }}
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ matrix.version }}
