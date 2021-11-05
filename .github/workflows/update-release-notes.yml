@@ -34,6 +34,8 @@ jobs:
       - name: Create matrix of modified release note versions
         id: set-matrix
         # Remove dirs and suffix then transform numbers to JSON array of strings
+        # Note: We use the output of the last step, BUT MODIFIED FILES ONLY.
+        #       This excludes deletes, additions, deletes etc!
         run: >
           echo "::set-output name=versions::$(basename -s -release-notes.md
           -a ${{ steps.changeset.outputs.modified_files }} |
@@ -53,9 +55,6 @@ jobs:
       matrix:
         version: ${{ fromJson(needs.get-changed-notes.outputs.versions) }}
     steps:
-      - name: Echo
-        run: |
-          echo ${{ matrix.version }}
       - name: Checkout
         uses: actions/checkout@v2
       - name: Release
