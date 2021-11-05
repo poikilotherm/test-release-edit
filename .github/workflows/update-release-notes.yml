@@ -56,9 +56,10 @@ jobs:
       - name: Echo
         run: |
           echo ${{ matrix.version }}
-  #    - name: Checkout
-  #      uses: actions/checkout@v2
-  #    - name: Release
-  #      uses: softprops/action-gh-release@v1
-  #      with:
-  #        body_path: doc/release-notes/{{ env.VERSION }}-release-notes.md
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag: v${{ matrix.version }}
+          body_path: doc/release-notes/${{ matrix.version }}-release-notes.md
