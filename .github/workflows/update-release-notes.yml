@@ -1,5 +1,7 @@
 name: Update Release Notes
 
+# Only run on develop branch and only if the changeset contains a file
+# relevant to us.
 on:
   push:
     branches:
@@ -12,24 +14,31 @@ jobs:
   get-changed-notes:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      versions: ${{ steps.set-matrix.outputs.versions }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        # As we want to build a changeset that might contain multiple
+        # commits since the last push, let's create a larger checkout
+        # but avoid 0 = all history
         with:
-          fetch-depth: 0
+          fetch-depth: 200
       - name: Calculate Changeset
         id: changeset
         uses: tj-actions/changed-files@v11.5
         with:
+          # We create a changeset based on all commits since last push!
           since_last_remote_commit: 'true'
           files: |
             -release-notes.md$
-      - name: List all modified files
-        run: |
-          for file in ${{ steps.changeset.outputs.modified_files }}; do
-            echo "$file was modified"
-          done
+      - name: Get versions of modified release notes
+        # Remove dirs and suffix then transform numbers to JSON array of strings
+        run: >
+          echo "::set-output name=versions::$(basename -s -release-notes.md
+          -a ${{ steps.changeset.outputs.modified_files }} |
+          sed -e 's#^#"#' -e 's#$#"#' |
+          paste -s -d, - |
+          sed -e 's#^#[#' -e 's#$#]#')"
 
 
 
