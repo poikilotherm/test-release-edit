@@ -7,10 +7,6 @@ on:
     paths:
       - 'doc/release-notes/*-release-notes.md'
 
-
-env:
-  NOTES_FILE_SUFFIX: "-release-notes.md"
-
 jobs:
   # First get all the changed release notes in this changeset
   get-changed-notes:
@@ -28,7 +24,7 @@ jobs:
         with:
           since_last_remote_commit: 'true'
           files: |
-            {{ env.NOTES_FILE_SUFFIX }}$
+            -release-notes.md$
       - name: List all modified files
         run: |
           for file in ${{ steps.changeset.outputs.modified_files }}; do
