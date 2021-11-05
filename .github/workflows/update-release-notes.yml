@@ -40,13 +40,21 @@ jobs:
           paste -s -d, - |
           sed -e 's#^#[#' -e 's#$#]#')"
 
+  mangle-notes:
+    # Make the job run after above
+    needs: get-changed-notes
 
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
-  #mangle-notes:
-  #  runs-on: ubuntu-latest
-  #  permissions:
-  #    contents: write
-  #  steps:
+    strategy:
+      matrix:
+        version: ${{ fromJson(needs.get-changed-notes.outputs.versions) }}
+    steps:
+      - name: Echo
+        run: |
+          echo ${{ matrix.version }}
   #    - name: Checkout
   #      uses: actions/checkout@v2
   #    - name: Release
