@@ -1,0 +1,50 @@
+name: Update Release Notes
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'doc/release-notes/*-release-notes.md'
+
+
+env:
+  NOTES_FILE_SUFFIX: "-release-notes.md"
+
+jobs:
+  # First get all the changed release notes in this changeset
+  get-changed-notes:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        #with:
+        #  fetch-depth: 2
+      - name: Calculate Changeset
+        id: changeset
+        uses: tj-actions/changed-files@v11.5
+        with:
+          since_last_remote_commit: 'true'
+          files: |
+            {{ env.NOTES_FILE_SUFFIX }}$
+      - name: List all modified files
+        run: |
+          for file in ${{ steps.changeset.outputs.modified_files }}; do
+            echo "$file was modified"
+          done
+
+
+
+  #mangle-notes:
+  #  runs-on: ubuntu-latest
+  #  permissions:
+  #    contents: write
+  #  steps:
+  #    - name: Checkout
+  #      uses: actions/checkout@v2
+  #    - name: Release
+  #      uses: softprops/action-gh-release@v1
+  #      with:
+  #        body_path: doc/release-notes/{{ env.VERSION }}-release-notes.md
