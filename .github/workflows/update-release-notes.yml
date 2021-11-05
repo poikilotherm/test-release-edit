@@ -61,5 +61,5 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          tag: v${{ matrix.version }}
+          tag_name: v${{ matrix.version }}
           body_path: doc/release-notes/${{ matrix.version }}-release-notes.md
